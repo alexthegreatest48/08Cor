@@ -18,7 +18,7 @@ private val client = OkHttpClient.Builder()
     })
     .build()
 
-private const val BASE_URL = "http://10.0.2.2:9999/api/slow"
+private const val BASE_URL = "http://127.0.0.1:9999/api"
 private val gson = Gson()
 
 suspend fun OkHttpClient.apiCall(url: String): Response{
@@ -48,7 +48,7 @@ fun main(){
     CoroutineScope(EmptyCoroutineContext).launch {
         val posts = makeRequest(url = "$BASE_URL/posts", object : TypeToken<List<Post>>() {})
         posts.map{post ->
-           async{ makeRequest(url = "$BASE_URL/authors/{$post.id}", object : TypeToken<List<Author>>(){})}
+           async{ makeRequest(url = "$BASE_URL/authors/${post.authorId}", object : TypeToken<Author>(){})}
         }.awaitAll()
     }
     Thread.sleep(100000)
